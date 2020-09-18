@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="title_activity_main_ui">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
+
+
+    <string name="title_activity_maps">Current Place Details</string>
+    <string name="default_info_title">Default Location</string>
+    <string name="default_info_snippet">No places found, because location permission is disabled.</string>
+    <string name="option_get_place">Get place</string>
+    <string name="pick_place">Choose a place</string>
+
+
+    <string name="btn_persistent">Persistent Bottom Sheet</string>
+    <string name="btn_modal">Modal Bottom Sheet</string>
+    <string name="tv_title">Learn Bottom Sheet</string>
+    <string name="tv_description">
+        A BottomSheet is a component that is used to display some information by sliding
+        the view up in the screen and also you can hide this BottomSheet when the message
+        is conveyed to the users. This is a nice way of conveying some message or performing
+        some task in Android. Types of BottomSheet \n\nA BottomSheet is of two types: \n\nPersistent BottomSheet \n\nModal BottomSheet</string>
+    <string name="btn_one">Button 1</string>
+    <string name="btn_two">Button 2</string>
+    <string name="btn_three">Button 3</string>
+</resources>
