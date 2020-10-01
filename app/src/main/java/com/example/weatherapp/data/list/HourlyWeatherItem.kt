@@ -1,4 +1,4 @@
-package com.example.weatherapp.list
+package com.example.weatherapp.data.list
 
 import android.graphics.Bitmap
 

@@ -1,4 +1,4 @@
-package com.example.weatherapp.adapter
+package com.example.weatherapp.data.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
-import com.example.weatherapp.list.HourlyWeatherItem
+import com.example.weatherapp.data.list.HourlyWeatherItem
 import kotlinx.android.synthetic.main.hourly_weather_item.view.*
 
 class HourlyWeatherAdapter(
