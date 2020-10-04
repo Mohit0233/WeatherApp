@@ -56,7 +56,7 @@ class DashboardFragment :
     private var lastKnownLocation: Location = Location("")
     private var weatherData: WeatherData? = null
     private var marker: Marker? = null
-    private val apiKey = getString(R.string.weather_api_key)
+    private val apiKey = "*************api***************"
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

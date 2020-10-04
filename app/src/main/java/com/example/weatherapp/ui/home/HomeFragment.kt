@@ -3,7 +3,6 @@ package com.example.weatherapp.ui.home
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.weatherapp.R
 import com.example.weatherapp.data.network.Resource
 import com.example.weatherapp.data.network.WeatherApi
 import com.example.weatherapp.data.repository.WeatherRepository
@@ -14,7 +13,7 @@ import com.example.weatherapp.ui.utlis.updateUi
 
 class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, WeatherRepository>() {
 
-    private val apiKey = getString(R.string.weather_api_key)
+    private val apiKey = "*****************api***************"
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
