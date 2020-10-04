@@ -10,7 +10,7 @@ A app made with kotlin using
 
 ### Home Fragment
 
-<img align="left" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
+<img align="left" src="https://raw.githubusercontent.com/Mohit0233/WeatherApp/master/Output/Home.jpg" width="218px">
 
 <div align="center">
 <br>
@@ -37,7 +37,7 @@ A app made with kotlin using
 
 ### Dashboard fragment
 
-<img align="right" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
+<img align="right" src="https://raw.githubusercontent.com/Mohit0233/WeatherApp/master/Output/Dashboard.jpg" width="218px">
 
 <div align="center">
 <br>
@@ -60,42 +60,3 @@ A app made with kotlin using
 </div>
 
 ---
-
-## `center` alignment example
-
-<p align="center">
-  <img align="center" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
-</p>
-
-```
-<p align="center">
-  <img width="460" height="300" src="http://www.fillmurray.com/460/300">
-</p>
-```
-
----
-
-## Markdown Formatting on steroids
-
-If you like this, you might enjoy [markdown-magic](https://github.com/davidwells/markdown-magic). I built it to automatically format markdown files and allow folks to sync docs/code/data from external sources. 
-
-
-
-
-<img src="" width="200px">
-
-<img align="left" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
-<img align="right" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
-<img align="center" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
-
-<br>
-<img align="left" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
-<img align="right" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
-<img align="right" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">
-<img align="right" src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="218px">&nbsp &nbsp &nbsp 
-
-
-
-| Syntax      | Description | Test Text     |
-| :---        |    :----:   |          ---: |
-| <img src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="200px">| <img src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="200px">| <img src="https://lh3.googleusercontent.com/-LR1bpT8qoXESZ-BSHo33A4CODrU97LtXUxUNrHGKUr7Ss9qHCzV45qcBao_f-bU6F7m=w1536-h792-rw" width="200px">|
