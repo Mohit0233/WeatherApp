@@ -1,6 +1,7 @@
 package com.example.weatherapp.ui.utlis
 
 import android.view.View
+import android.widget.AbsListView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,11 +11,52 @@ import com.example.weatherapp.data.adapter.HourlyWeatherAdapter
 import com.example.weatherapp.data.list.DayWeatherItem
 import com.example.weatherapp.data.list.HourlyWeatherItem
 import com.example.weatherapp.data.responses.WeatherData
+import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.layout_weather_data.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-fun updateUi(view: View, weatherData: WeatherData) {
+
+var iconMap = mapOf(
+    "01d" to R.drawable.png_01d,
+    "01n" to R.drawable.png_01n,
+    "02d" to R.drawable.png_02d,
+    "02n" to R.drawable.png_02n,
+    "03d" to R.drawable.png_03d,
+    "03n" to R.drawable.png_03n,
+    "04d" to R.drawable.png_04d,
+    "04n" to R.drawable.png_04n,
+    "09d" to R.drawable.png_09d,
+    "09n" to R.drawable.png_09n,
+    "10d" to R.drawable.png_10d,
+    "10n" to R.drawable.png_10n,
+    "11d" to R.drawable.png_11d,
+    "11n" to R.drawable.png_11n,
+    "13d" to R.drawable.png_13d,
+    "13n" to R.drawable.png_13n,
+    "50d" to R.drawable.png_50d,
+    "50n" to R.drawable.png_50n,
+)
+
+fun updateUi(view: View, weatherData: WeatherData, isHomeFragment: Boolean) {
+
+    var temp = "7-Day Weather Report"
+    view.weekWeatherReportTextView.text = temp
+    temp = "Weather Details"
+    view.weatherDetailsTextView.text = temp
+    temp = "Temperature Felt"
+    view.temperatureFeltTextView.text = temp
+    temp = "Visibility"
+    view.visibilityTextView.text = temp
+    temp = "Air Pressure"
+    view.airPressureTextView.text = temp
+    temp = "UV"
+    view.ultraVioletTextView.text = temp
+    temp = "Humidity"
+    view.humidityTextView.text = temp
+    temp = "NW"
+    view.nWDescriptionTextView.text = temp
 
     val tempTextView: TextView = view.findViewById(R.id.tempTextView)
     val condTextView: TextView = view.findViewById(R.id.condTextView)
@@ -39,8 +81,7 @@ fun updateUi(view: View, weatherData: WeatherData) {
     )
     val dayWeatherViewManager = LinearLayoutManager(view.context)
 
-
-    var temp = weatherData.current.temp.toString() + " "
+    temp = weatherData.current.temp.toString() + " "
     tempTextView.text = temp
     temp = weatherData.current.weather[0].main + " "
     condTextView.text = temp
@@ -69,12 +110,13 @@ fun updateUi(view: View, weatherData: WeatherData) {
         hourlyWeatherList.plusAssign(
             HourlyWeatherItem(
                 intUTCToDateHour(weatherData.hourly[i].dt),
-                null,
+                iconMap[weatherData.hourly[i].weather[0].icon],
                 weatherData.hourly[i].weather[0].main,
                 "${weatherData.hourly[i].temp}°C"
             )
         )
     }
+
 
     for (i in weatherData.daily.indices) {
         dayWeatherList.plusAssign(
@@ -85,7 +127,7 @@ fun updateUi(view: View, weatherData: WeatherData) {
                 } else {
                     intUTCToDateDay(weatherData.daily[i].dt)
                 },
-                null,
+                iconMap[weatherData.daily[i].weather[0].icon],
                 weatherData.daily[i].weather[0].main,
                 "${weatherData.daily[i].temp.min}/${weatherData.daily[i].temp.max}°C"
             )
@@ -98,7 +140,16 @@ fun updateUi(view: View, weatherData: WeatherData) {
         setHasFixedSize(true)
         layoutManager = hourlyWeatherViewManager
         adapter = hourlyWeatherViewAdapter
-
+        addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (isHomeFragment) {
+                    view.swipeToRefresh.isEnabled =
+                        !(newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING
+                                || newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL)
+                }
+            }
+        })
     }
 
 

@@ -1,11 +1,9 @@
 package com.example.weatherapp.data.list
 
-import android.graphics.Bitmap
-
 data class DayWeatherItem(
     val p0: String,
     val p1: String,
-    val p2: Bitmap?,
+    val p2: Int?,
     val p3: String,
     val p4: String
 )

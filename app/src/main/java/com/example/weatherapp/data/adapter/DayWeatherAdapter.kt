@@ -35,7 +35,7 @@ class DayWeatherAdapter(
         val currentItem = dayWeatherItem[position]
         holder.dateTextView.text = currentItem.p0
         holder.dayTextView.text = currentItem.p1
-        holder.dayWeatherImageView.setImageResource(R.drawable.ic_launcher)
+        holder.dayWeatherImageView.setImageResource(currentItem.p2!!)
         holder.disTextView.text = currentItem.p3
         holder.tempTextView.text = currentItem.p4
 

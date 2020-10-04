@@ -36,7 +36,7 @@ class HourlyWeatherAdapter(
     override fun onBindViewHolder(holder: HourlyWeatherAdapter.MyViewHolder, position: Int) {
         val currentItem = hourlyWeatherItem[position]
         holder.clockTextView.text = currentItem.p0
-        holder.hourlyWeatherImageView.setImageResource(R.drawable.ic_launcher)
+        holder.hourlyWeatherImageView.setImageResource(currentItem.p1!!)
         holder.disTextView.text = currentItem.p2
         holder.tempTextView.text = currentItem.p3
     }

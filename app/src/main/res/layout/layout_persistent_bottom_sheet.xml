@@ -9,6 +9,6 @@
     app:behavior_peekHeight="100dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <include layout="@layout/fragment_home"/>
+    <include layout="@layout/layout_weather_data" />
 
 </androidx.core.widget.NestedScrollView>

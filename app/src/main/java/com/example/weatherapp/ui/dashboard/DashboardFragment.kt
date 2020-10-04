@@ -1,19 +1,19 @@
 package com.example.weatherapp.ui.dashboard
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.lifecycleScope
 import com.example.weatherapp.R
 import com.example.weatherapp.data.network.Resource
 import com.example.weatherapp.data.network.WeatherApi
@@ -21,6 +21,8 @@ import com.example.weatherapp.data.repository.WeatherRepository
 import com.example.weatherapp.data.responses.WeatherData
 import com.example.weatherapp.databinding.FragmentDashboardBinding
 import com.example.weatherapp.ui.base.BaseFragment
+import com.example.weatherapp.ui.utlis.handleApiError
+import com.example.weatherapp.ui.utlis.snackbar
 import com.example.weatherapp.ui.utlis.updateUi
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -30,9 +32,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.layout_persistent_bottom_sheet.view.*
-import kotlinx.coroutines.launch
 
 class DashboardFragment :
     BaseFragment<DashboardViewModel, FragmentDashboardBinding, WeatherRepository>(),
@@ -46,79 +49,57 @@ class DashboardFragment :
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
-    private var locationPermissionGranted = false
-    private var lastKnownLocation: Location? = null
-    private var weatherData: WeatherData? = null
-
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
+
+    private val defaultLocation = LatLng(29.7911013062734, 76.40132917643)
+    private var locationPermissionGranted = false
+    private var lastKnownLocation: Location = Location("")
+    private var weatherData: WeatherData? = null
+    private var marker: Marker? = null
+    private val apiKey = getString(R.string.weather_api_key)
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        /*if (savedInstanceState != null) {
-            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
+        if (savedInstanceState != null) {
+            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)!!
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
             weatherData = savedInstanceState.getParcelable(KEY_WEATHER_DATA)
-        }*/
+        }
         Log.e("Weather Data", weatherData.toString())
 
-        lifecycleScope.launch {
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.myMap) as SupportMapFragment?
+        mapFragment?.getMapAsync(this)
 
-            fusedLocationProviderClient =
-                LocationServices.getFusedLocationProviderClient(requireActivity())
-            val mapFragment =
-                childFragmentManager.findFragmentById(R.id.myMap) as SupportMapFragment?
-            mapFragment?.getMapAsync(this@DashboardFragment)
-        }
 
         bottomSheetBehavior = BottomSheetBehavior.from(binding.root.bottomSheet)
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                // handle onSlide
+            override fun onSlide(bottomSheet: View, slideOffset: Float) { /*handle onSlide*/
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-                        Toast.makeText(
-                            this@DashboardFragment.requireContext(),
-                            "STATE_COLLAPSED",
-                            Toast.LENGTH_SHORT
-                        ).show()
                         binding.root.bottomSheet.background =
                             (ContextCompat.getDrawable(requireContext(), R.drawable.round))
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
-                        Toast.makeText(
-                            this@DashboardFragment.requireContext(),
-                            "STATE_EXPANDED",
-                            Toast.LENGTH_SHORT
-                        ).show()
                         binding.root.bottomSheet.background =
                             (ContextCompat.getDrawable(requireContext(), R.drawable.edge))
                     }
-                    BottomSheetBehavior.STATE_DRAGGING -> Toast.makeText(
-                        this@DashboardFragment.requireContext(),
-                        "STATE_DRAGGING",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    BottomSheetBehavior.STATE_SETTLING -> Toast.makeText(
-                        this@DashboardFragment.requireContext(),
-                        "STATE_SETTLING",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    BottomSheetBehavior.STATE_HIDDEN -> Toast.makeText(
-                        this@DashboardFragment.requireContext(),
-                        "STATE_HIDDEN",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    else -> Toast.makeText(
-                        this@DashboardFragment.requireContext(),
-                        "OTHER_STATE",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                    }
+                    BottomSheetBehavior.STATE_SETTLING -> {
+                    }
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                    }
+                    else -> {
+                    }
                 }
             }
         })
@@ -126,31 +107,31 @@ class DashboardFragment :
         viewModel.weatherResponse.observe(viewLifecycleOwner, {
             when (it) {
                 is Resource.Success -> {
-                    updateUi(binding.root, it.value)
+                    updateUi(binding.root, it.value, false)
                     weatherData = it.value
                 }
                 is Resource.Failure -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "Damn, Failed To Load Data",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    handleApiError(it) {
+                        viewModel.getWeather(
+                            lastKnownLocation.latitude.toString(),
+                            lastKnownLocation.longitude.toString(),
+                            apiKey
+                        )
+                    }
                 }
             }
         })
 
     }
 
-    /*override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: Bundle) {
         map?.let { map ->
             outState.putParcelable(KEY_CAMERA_POSITION, map.cameraPosition)
             outState.putParcelable(KEY_LOCATION, lastKnownLocation)
         }
         super.onSaveInstanceState(outState)
-        outState.putParcelable(KEY_WEATHER_DATA, weatherData as Parcelable)
     }
-*/
+
     override fun onMapReady(map: GoogleMap) {
         this.map = map
         map.setOnMapClickListener(this)
@@ -162,33 +143,42 @@ class DashboardFragment :
     }
 
     override fun onMapClick(point: LatLng) {
+        if (marker == null) {
+            marker = map?.addMarker(
+                MarkerOptions()
+                    .position(point)
+                    .title("${point.latitude},${point.longitude} is the location")
+            )
+        } else {
+            marker!!.position = point
+            marker!!.title = "${point.latitude},${point.longitude} is the location"
+        }
+        lastKnownLocation = Location("")
+        lastKnownLocation.latitude = point.latitude
+        lastKnownLocation.longitude = point.longitude
         viewModel.getWeather(
             point.latitude.toString(),
             point.longitude.toString(),
-            app_id
+            apiKey
         )
-        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED)
+        if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        else
+        } else {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
         Toast.makeText(this.context, "click $point", Toast.LENGTH_SHORT).show()
     }
 
     override fun onMapLongClick(point: LatLng) {
         try {
-            val manager: FragmentManager =
-                (this.context as AppCompatActivity).supportFragmentManager
+            val manager: FragmentManager = childFragmentManager
             CustomBottomSheetDialogFragment().show(manager, CustomBottomSheetDialogFragment.TAG)
         } catch (e: Exception) {
-            Log.e("❤", e.printStackTrace().toString())
+            Log.e("Exception in omMapLongClick", e.printStackTrace().toString())
         }
-        Toast.makeText(this.context, "long click", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onCameraIdle() {
-        //if(!::map.isInitialized) return
-        //cameraTextView.text = map.cameraPosition.toString()
-        //Toast.makeText(this.context, "camera idle", Toast.LENGTH_SHORT).show()
+    override fun onCameraIdle() { /**/
     }
 
     private fun updateLocationUI() {
@@ -202,7 +192,7 @@ class DashboardFragment :
             } else {
                 map?.isMyLocationEnabled = false
                 map?.uiSettings?.isMyLocationButtonEnabled = false
-                lastKnownLocation = null
+                lastKnownLocation = Location("")
                 getLocationPermission()
             }
         } catch (e: SecurityException) {
@@ -216,33 +206,51 @@ class DashboardFragment :
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        lastKnownLocation = task.result
-                        if (lastKnownLocation != null) {
-                            map?.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    LatLng(
-                                        lastKnownLocation!!.latitude,
-                                        lastKnownLocation!!.longitude
-                                    ), DEFAULT_ZOOM.toFloat()
+                        if (task.result != null) {
+                            lastKnownLocation = task.result
+                        } else {
+                            lastKnownLocation.latitude = defaultLocation.latitude
+                            lastKnownLocation.longitude = defaultLocation.longitude
+                            marker = map?.addMarker(
+                                MarkerOptions()
+                                    .position(defaultLocation)
+                                    .title("${defaultLocation.latitude},${defaultLocation.longitude} is the location")
+                            )
+                            requireView().snackbar("Location Service Not Enabled") {
+                                startActivity(
+                                    Intent(
+                                        Settings.ACTION_LOCATION_SOURCE_SETTINGS
+                                    )
                                 )
-                            )
-                            viewModel.getWeather(
-                                lastKnownLocation!!.latitude.toString(),
-                                lastKnownLocation!!.longitude.toString(),
-                                app_id
-                            )
+                            }
                         }
+                        map?.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    lastKnownLocation.latitude,
+                                    lastKnownLocation.longitude
+                                ), DEFAULT_ZOOM.toFloat()
+                            )
+                        )
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.")
                         Log.e(TAG, "Exception: %s", task.exception)
+                        requireView().snackbar(task.exception.toString())
                         map?.moveCamera(
                             CameraUpdateFactory
                                 .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
                         )
+                        lastKnownLocation.latitude = defaultLocation.latitude
+                        lastKnownLocation.longitude = defaultLocation.longitude
                         map?.uiSettings?.isMyLocationButtonEnabled = false
                     }
                 }
             }
+            viewModel.getWeather(
+                lastKnownLocation.latitude.toString(),
+                lastKnownLocation.longitude.toString(),
+                apiKey
+            )
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)
             Toast.makeText(this.context, "Some exception occurred", Toast.LENGTH_SHORT).show()
@@ -274,7 +282,6 @@ class DashboardFragment :
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
 
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED
                 ) {
@@ -303,8 +310,5 @@ class DashboardFragment :
         private const val KEY_CAMERA_POSITION = "camera_position"
         private const val KEY_LOCATION = "location"
         private const val KEY_WEATHER_DATA = "weather_data"
-        const val app_id = "21d5615c0b94f68985f7079b0f592dd1"
     }
-
-
 }

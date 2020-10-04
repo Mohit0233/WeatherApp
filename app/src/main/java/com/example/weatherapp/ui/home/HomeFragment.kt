@@ -1,40 +1,49 @@
 package com.example.weatherapp.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
+import com.example.weatherapp.R
 import com.example.weatherapp.data.network.Resource
 import com.example.weatherapp.data.network.WeatherApi
 import com.example.weatherapp.data.repository.WeatherRepository
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.ui.base.BaseFragment
+import com.example.weatherapp.ui.utlis.handleApiError
 import com.example.weatherapp.ui.utlis.updateUi
 
 class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, WeatherRepository>() {
 
-    //private val mainUiViewModel: MainUiViewModel by activityViewModels()
+    private val apiKey = getString(R.string.weather_api_key)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.getWeather("-33.8523341", "151.2106085", "21d5615c0b94f68985f7079b0f592dd1")
+        binding.swipeToRefresh.isRefreshing = true
+        viewModel.getWeather("-33.8523341", "151.2106085", apiKey)
 
         viewModel.weatherResponse.observe(viewLifecycleOwner, {
             when (it) {
 
                 is Resource.Success -> {
-
-                    Log.e("Hi", it.value.toString())
-                    updateUi(binding.root, it.value)
+                    updateUi(binding.root, it.value, true)
+                    binding.swipeToRefresh.isRefreshing = false
                 }
                 is Resource.Failure -> {
-                    Toast.makeText(requireContext(), "Damn, Failed To Load Data", Toast.LENGTH_LONG)
-                        .show()
+                    binding.swipeToRefresh.isRefreshing = false
+                    handleApiError(it) {
+                        viewModel.getWeather(
+                            "-33.8523341",
+                            "151.2106085",
+                            apiKey
+                        )
+                    }
                 }
             }
         })
+        binding.swipeToRefresh.setOnRefreshListener {
+            viewModel.getWeather("29.8523341", "76.2106085", apiKey)
+        }
     }
 
     override fun getViewModal() = HomeViewModel::class.java
@@ -46,4 +55,6 @@ class HomeFragment : BaseFragment<HomeViewModel, FragmentHomeBinding, WeatherRep
 
     override fun getFragmentRepository() =
         WeatherRepository(remoteDataSource.buildApi(WeatherApi::class.java))
+
+
 }
