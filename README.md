@@ -52,7 +52,7 @@ A app made with kotlin using
     <br>
     <br>
     <p align="center">
-        In Dashboard fragment,there is a map fragment as shown in pick which is used<br>
+        In Dashboard fragment,there is a map fragment as shown in pic which is used<br>
         to get location.When user click at any place in google map then we get a <br>
         location.This location can be use to get data from the weather api through<br>
          retrofit2.Then the weather data we get is shown by bottom sheet<br>
