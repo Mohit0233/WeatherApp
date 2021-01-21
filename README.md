@@ -1,5 +1,5 @@
 # WeatherApp
-A app made with kotlin using 
+An app made with kotlin using 
 >- ViewModel
 >- LiveData
 >- Coroutines
